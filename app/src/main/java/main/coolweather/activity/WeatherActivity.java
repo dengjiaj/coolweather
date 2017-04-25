@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import main.coolweather.R;
+import main.coolweather.service.AutoUpdateService;
 import main.coolweather.util.HttpCallbackListener;
 import main.coolweather.util.HttpUtil;
 import main.coolweather.util.Utility;
@@ -162,5 +163,7 @@ public class WeatherActivity extends Activity{
         currentDataText.setText(preferences.getString("current_data",""));
         weatherInfoLayout.setVisibility(View.VISIBLE);
         cityNameText.setVisibility(View.VISIBLE);
+        Intent intent =  new Intent(this, AutoUpdateService.class);
+        startService(intent);
     }
 }
