@@ -64,11 +64,17 @@ import java.util.List;
          */
         private int currentLevel;
 
+        /**
+         * 是否从WeatherActivity中跳转过来
+         */
+        private boolean isFromWeatherActivity;
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            isFromWeatherActivity = getIntent().getBooleanExtra("from_weather_activity",false);
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            if(preferences.getBoolean("city_selected",false)){
+            //已经选择了城市且不是从WeatherActivity跳转过来，才会跳转到WeatherActitvity
+            if(preferences.getBoolean("city_selected",false) && !isFromWeatherActivity){
                 Intent intent = new Intent(this,WeatherActivity.class);
                 startActivity(intent);
                 finish();
@@ -228,9 +234,10 @@ import java.util.List;
          */
         private void showProgressDialog() {
             if(progressDialog == null){
+
                 progressDialog = new ProgressDialog(this);
+                progressDialog.setCancelable(false);
                 progressDialog.setMessage("正在加载");
-                progressDialog.setCanceledOnTouchOutside(false);
             }
             progressDialog.show();
         }
@@ -241,9 +248,13 @@ import java.util.List;
         public void onBackPressed() {
             if(currentLevel == LEVEL_COUNTY){
                 queryCities();
-            }else if(currentLevel == LEVEL_COUNTY){
+            }else if(currentLevel == LEVEL_CITY){
                 queryProvinces();
             }else {
+                if(isFromWeatherActivity){
+                    Intent intent = new Intent(this,WeatherActivity.class);
+                    startActivity(intent);
+                }
                 finish();
             }
         }

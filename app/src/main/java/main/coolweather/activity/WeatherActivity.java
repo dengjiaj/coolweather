@@ -1,12 +1,14 @@
 package main.coolweather.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import main.coolweather.R;
@@ -43,7 +45,14 @@ public class WeatherActivity extends Activity{
      * 用于显示当前日期
      */
     private TextView currentDataText;
-
+    /**
+     * 更新天气按钮
+     */
+    private Button refreshWeather;
+    /**
+     * 切换城市按钮
+     */
+    private Button swichCity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +77,28 @@ public class WeatherActivity extends Activity{
             //如果没有县级代号就显示本地天气
             showWeather();
         }
+        swichCity = (Button)findViewById(R.id.switch_city);
+        swichCity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(WeatherActivity.this,ChooseAreaActivity.class);
+                intent.putExtra("from_weather_activity",true);
+                startActivity(intent);
+                finish();
+            }
+        });
+        refreshWeather = (Button)findViewById(R.id.refresh_weather);
+        refreshWeather.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                publishText.setText("同步中...");
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this);
+                String weatherCode = preferences.getString("weather_code","");
+                if(!TextUtils.isEmpty(weatherCode)){
+                    queryWeatherInfo(weatherCode);
+                }
+            }
+        });
     }
 
     /**
